@@ -6,6 +6,7 @@
 #define mapWidth 24
 #define mapHeight 24
 
+
 #include "includes/fdf.h"
 
 int worldMap[mapWidth][mapHeight]=
@@ -65,7 +66,7 @@ int	init_game_vars(t_game *game)
 	return (1);
 }
 
-int main(int /*argc*/, char argv[])
+int main(int argc, char *argv[])
 {
 
 	t_game	*game;
@@ -125,7 +126,6 @@ int main(int /*argc*/, char argv[])
 		rays->map_y = floor(rays->pos_y);
 
 		//length of ray from one x or y-side to next x or y-side
-
 		rays->delta_dist_x = sqrt(1 + ( rays->ray_dir_y *  rays->ray_dir_y) / (rays->ray_dir_x  * rays->ray_dir_x));
 		rays->delta_dist_y = sqrt(1 + (rays->ray_dir_x * rays->ray_dir_x) / (rays->ray_dir_y * rays->ray_dir_y));
 
@@ -139,22 +139,22 @@ int main(int /*argc*/, char argv[])
 		//calculate step and initial sideDist
 		if (rays->ray_dir_x < 0)
 		{
-			stepX = -1;
+			rays->step_x = -1;
 			rays->side_dist_x = (rays->pos_x - rays->map_x) * rays->delta_dist_x;
 		}
 		else
 		{
-			stepX = 1;
+			rays->step_x = 1;
 			rays->side_dist_x = (rays->map_x + 1.0 - rays->pos_x) * rays->delta_dist_x;
 		}
 		if (rays->ray_dir_y < 0)
 		{
-			stepY = -1;
+			rays->step_y = -1;
 			rays->side_dist_y = (rays->pos_y - rays->map_y) * rays->delta_dist_y;
 		}
 		else
 		{
-			stepY = 1;
+			rays->step_y = 1;
 			rays->side_dist_y = (rays->map_y + 1.0 - rays->pos_y) * rays->delta_dist_y;
 		}
 		 while (rays->hit == 0)
@@ -177,7 +177,6 @@ int main(int /*argc*/, char argv[])
 				rays->hit = 1;
       	}
 
-
 		//Calculate distance of perpendicular ray (Euclidean distance would give fisheye effect!)
 		if(side == 0) rays->perp_wall_dist = (rays->side_dist_x - rays->delta_dist_x);
 		else          rays->perp_wall_dist = (rays->side_dist_y - rays->delta_dist_y);
@@ -187,9 +186,22 @@ int main(int /*argc*/, char argv[])
 
 		//calculate lowest and highest pixel to fill in current stripe
 		rays->draw_start = -rays->line_height / 2 + mapHeight / 2;
-		if(rays->draw_start < 0) drawStart = 0;
-		int drawEnd = lineHeight / 2 + h / 2;
-		if(drawEnd >= h) drawEnd = h - 1;
+		if(rays->draw_start < 0) rays->draw_start = 0;
+		rays->draw_end = rays->line_height / 2 + mapHeight / 2;
+		if(rays->draw_end >= mapHeight) rays->draw_end = mapHeight - 1;
+		rays->texnum = worldMap[rays->map_x][rays->map_y] - 1; //1 subtracted from it so that texture 0 can be used!
+
+      //calculate value of wallX
+		double wallX; //where exactly the wall was hit
+		if (side == 0) rays->wallx = rays->pos_y + rays->perp_wall_dist * rays->ray_dir_y;
+		else           rays->wallx = rays->pos_x + rays->perp_wall_dist * rays->ray_dir_x;
+		rays->wallx -= floor((rays->wallx));
+
+		//x coordinate on the texture
+		rays->texx = (int)(wallX * (double)(texWidth));
+		if(rays->side == 0 && rays->ray_dir_x > 0) rays->texx = texWidth - rays->texx - 1;
+		if(rays->side == 1 && rays->ray_dir_y < 0) rays->texx = texWidth - rays->texx - 1;
+		
 	}
 }
 
