@@ -1,6 +1,10 @@
 # cube3d
 First-person 3D representation of a maze using raycasting, similar to Wolfenstein 3D (1992).
 
+### Maps
+
+You can create your own map with .cub extension, select your own textures and floor/ceiling colors.
+
 ### Controls
 
 You can move around the maze with ``W`` ``A`` ``S`` ``D``.
