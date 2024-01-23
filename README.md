@@ -16,5 +16,5 @@ To exit the game, press ``ESC`` or click the red cross.
 The basic program that was required to pass. It only includes wall textures and a sprite ; no floor/ceiling textures, no weapons, no enemies, no game elements at all.
 
 <p align="center">
-  <img src="https://imgur.com/Ugrc9NF" width="60%" />
+  <img src="https://i.imgur.com/Ugrc9NF.png" width="60%" />
 </p>
